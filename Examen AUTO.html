@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Simulator Examen Auto B</title>
+  <style>
+    :root {
+      --bg-root: #0f172a;
+      --bg-card: #1e293b;
+      --bg-subtle: #334155;
+      --header-bg: #0b1120;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-indigo: #6366f1;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-slate: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-root);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--bg-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .header-bar {
+      background-color: var(--header-bg);
+      border: 1px solid var(--bg-subtle);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      color: var(--accent-indigo);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin: 8px 0 16px 0;
+      text-align: center;
+    }
+
+    .question-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .options-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--bg-subtle);
+      padding: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .option-item:active {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .option-item input[type="checkbox"] {
+      margin-top: 3px;
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent-indigo);
+      cursor: pointer;
+    }
+
+    .feedback-box {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .feedback-correct {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid var(--accent-emerald);
+    }
+
+    .feedback-wrong {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border: 1px solid var(--accent-rose);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      flex: 1;
+      padding: 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: opacity 0.15s ease;
+    }
+
+    button:active {
+      opacity: 0.8;
+    }
+
+    .btn-emerald { background-color: var(--accent-emerald); }
+    .btn-indigo { background-color: var(--accent-indigo); }
+    .btn-slate { background-color: var(--accent-slate); }
+
+    .hidden { display: none !important; }
+    ul { margin: 12px 0 16px 20px; line-height: 1.6; color: var(--text-muted); font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ECRAN START -->
+  <div id="screen-start">
+    <div style="text-align: center; margin-top: 40px;">
+      <span class="badge">DGPCI / DRPCIV SIMULATOR</span>
+      <h1>Examen Teoretic Auto<br>Categoria B</h1>
+    </div>
+
+    <div class="card">
+      <p style="font-weight: 600;">Reguli oficiale:</p>
+      <ul>
+        <li>Total întrebări: <strong>26</strong></li>
+        <li>Necesar pentru ADMIS: <strong>22</strong> răspunsuri corecte</li>
+        <li>Eliminare automată: la <strong>5 greșeli</strong> (RESPINS)</li>
+        <li>Întrebările pot avea 1, 2 sau toate 3 opțiuni corecte</li>
+        <li>Butonul <em>Amână</em> mută întrebarea la sfârșitul chestionarului</li>
+      </ul>
+      <p style="color: var(--text-muted); font-size: 0.85rem;" id="db-stat"></p>
+    </div>
+
+    <button class="btn-emerald" onclick="startExam()">Începe Chestionarul</button>
+  </div>
+
+  <!-- ECRAN TEST -->
+  <div id="screen-exam" class="hidden">
+    <div class="header-bar">
+      <span id="progress-lbl" style="font-weight: 600; color: var(--accent-indigo);">Întrebarea 1/26</span>
+      <span id="stats-lbl" style="color: var(--text-muted);">Corecte: 0 | Greșite: 0/5</span>
+    </div>
+
+    <div class="card">
+      <div id="q-text" class="question-title"></div>
+      
+      <div class="options-group">
+        <label class="option-item" id="lbl-a">
+          <input type="checkbox" id="chk-a" value="a">
+          <span id="txt-a"></span>
+        </label>
+        <label class="option-item" id="lbl-b">
+          <input type="checkbox" id="chk-b" value="b">
+          <span id="txt-b"></span>
+        </label>
+        <label class="option-item" id="lbl-c">
+          <input type="checkbox" id="chk-c" value="c">
+          <span id="txt-c"></span>
+        </label>
+      </div>
+
+      <div id="feedback-box" class="feedback-box"></div>
+    </div>
+
+    <div class="btn-group">
+      <button id="btn-submit" class="btn-indigo" onclick="submitAnswer()">Trimite Răspunsul</button>
+      <button id="btn-skip" class="btn-slate" onclick="deferQuestion()">Amână</button>
+      <button id="btn-next" class="btn-emerald hidden" onclick="loadNextQuestion()">Următoarea întrebare ➔</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const TOTAL_QUESTIONS = 26;
+  const PASSING_SCORE = 22;
+  const MAX_WRONG = 5;
+
+  // Baza de date curatata (fara imagini / duplicate)
+  const QUESTIONS_POOL = [
+    {
+      "id": 1,
+      "question": "Se aplică puncte de penalizare pentru:",
+      "options": {
+        "a": "nerespectarea semnificației indicatorului „Oprire”, instalat la trecerea la nivel cu o cale ferată;",
+        "b": "depășirea cu 31-40 km/h a vitezei maxime admise pe sectorul de drum respectiv pentru categoria din care face parte autovehiculul condus;",
+        "c": "depășirea cu 10-20 km/h a vitezei maxime admise pe sectorul de drum respectiv pentru categoria din care face parte autovehiculul condus."
+      },
+      "correct": ["a", "b", "c"]
+    },
+    {
+      "id": 2,
+      "question": "Căile respiratorii pot fi deblocate:",
+      "options": {
+        "a": "numai în unități medicale, folosindu-se instrumente speciale",
+        "b": "la locul accidentului, prin intervenții specifice",
+        "c": "indiferent unde, dacă victima suportă această intervenție"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 3,
+      "question": "Se aplică puncte de penalizare pentru:",
+      "options": {
+        "a": "circulația sau staționarea pe spațiul interzis care separă sensurile de circulație pe autostradă",
+        "b": "conducerea unui autovehicul cu permisul de conducere deteriorat",
+        "c": "lipsa unui ștergător de parbriz"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 4,
+      "question": "Care sunt vitezele maxime admise pentru categoria de autovehicule B1?",
+      "options": {
+        "a": "90 km/h pe autostrăzi, 85 km/h pe drumurile expres, 80 km/h pe drumurile naționale europene și 70 km/h pe celelalte categorii de drumuri;",
+        "b": "100 km/h pe autostrăzi, 90 km/h pe drumurile expres, 80 km/h pe drumurile naționale europene și 70 km/h pe celelalte categorii de drumuri;",
+        "c": "110 km/h pe autostrăzi, 90 km/h pe drumurile expres, 70 km/h pe drumurile naționale europene și 60 km/h pe celelalte categorii de drumuri."
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 5,
+      "question": "Prezența calaminei pe suprafața bujiilor și fumul albăstrui al eșapamentului indică:",
+      "options": {
+        "a": "mecanismul motor (grup piston-cilindru) este uzat",
+        "b": "rularea frecventă cu o viteză inferioară limitei legale",
+        "c": "folosirea unor bujii necorespunzătoare"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 6,
+      "question": "Ce culoare pot avea lămpile cu lumină intermitentă din spatele autovehiculului / tractorului agricol sau forestier?",
+      "options": {
+        "a": "roșie sau albă",
+        "b": "roșie sau galbenă",
+        "c": "galbenă sau albă"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 7,
+      "question": "Cum se penalizează pătrunderea într-o intersecție dirijată prin semafoare, dacă prin aceasta se produce blocarea circulației în intersecție?",
+      "options": {
+        "a": "cu amendă contravențională și aplicarea punctelor de penalizare;",
+        "b": "cu suspendarea exercitării dreptului de a conduce autovehicule pe o perioadă de 30 de zile;",
+        "c": "cu amendă contravențională."
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 8,
+      "question": "Întoarcerea este interzisă:",
+      "options": {
+        "a": "în rampă, dacă vizibilitatea este sub 50 m",
+        "b": "în dreptul unui garaj",
+        "c": "la trecerile pentru pietoni"
+      },
+      "correct": ["a", "c"]
+    },
+    {
+      "id": 9,
+      "question": "O hemoragie produsă la unul dintre membrele unei persoane rănite se va opri prin:",
+      "options": {
+        "a": "dezinfectarea rănii, pansarea și aplicarea atelelor",
+        "b": "ridicarea membrului accidentat în poziție verticală",
+        "c": "acțiunea compresivă asupra vasului lezat sau aplicarea garoului"
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 10,
+      "question": "Cum se sancționează depășirea pe partea dreaptă a sensului de mers, fără semnalizare și încadrare corespunzătoare direcției de deplasare?",
+      "options": {
+        "a": "cu amendă contravențională și puncte de penalizare;",
+        "b": "cu amendă contravențională;",
+        "c": "cu amendă contravențională și suspendarea exercitării dreptului de a conduce autovehiculul."
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 11,
+      "question": "Este permisă depășirea când din sens opus se apropie un alt vehicul?",
+      "options": {
+        "a": "da, dacă cel care se apropie din sens opus a redus viteza de deplasare pentru a facilita depășirea",
+        "b": "nu, dacă cel care se apropie din sens opus este obligat să efectueze manevre de evitare a coliziunii",
+        "c": "da, dacă spațiul lateral este suficient"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 12,
+      "question": "Cum asigurați un autoturism cu schimbător de viteză, pentru ca acesta să nu se deplaseze din pantă?",
+      "options": {
+        "a": "acționați frâna de serviciu",
+        "b": "aduceți maneta în „punctul mort”",
+        "c": "introduceți maneta într-o treaptă inferioară și acționați frâna de ajutor sau staționare"
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 13,
+      "question": "Puteți lăsa noaptea, pe un drum public, remorca autovehiculului / tractorului agricol sau forestier?",
+      "options": {
+        "a": "nu, întrucât în acest caz staționarea este interzisă",
+        "b": "da, deoarece remorca nu face parte din categoria autovehiculelor",
+        "c": "da, dacă luminile de poziție sunt aprinse"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 14,
+      "question": "Care sunt factorii care fac ca motorul Diesel al unui autoturism să emită fum excesiv?",
+      "options": {
+        "a": "defecțiuni la instalația de injecție",
+        "b": "lipsa combustibilului",
+        "c": "bușonul rezervorului închis la maximum"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 15,
+      "question": "Ce tip de coliziuni au cea mai mare forță de distrugere?",
+      "options": {
+        "a": "coliziunile laterale",
+        "b": "coliziunile frontale",
+        "c": "coliziunile din spate"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 16,
+      "question": "Care dintre următorii factori reprezintă baza conduitei preventive?",
+      "options": {
+        "a": "cunoașterea normelor de circulație și a regulilor de conducere a autovehiculului",
+        "b": "capacitatea de a fi politicos și disciplinat în traficul rutier",
+        "c": "încadrarea în baremele legale privind sănătatea"
+      },
+      "correct": ["a", "b"]
+    },
+    {
+      "id": 17,
+      "question": "În care dintre situații este interzisă depășirea?",
+      "options": {
+        "a": "în apropierea vârfurilor de rampă, când vizibilitatea este redusă sub 50 m",
+        "b": "în curbe, dacă vizibilitatea este redusă sub 50 m",
+        "c": "la întâlnirea indicatorului „Drum cu prioritate”"
+      },
+      "correct": ["a", "b"]
+    },
+    {
+      "id": 18,
+      "question": "Ce trebuie să aveți în vedere atunci când intenționați să depășiți atât bicicliști, cât și grupuri de pietoni care se deplasează pe carosabil?",
+      "options": {
+        "a": "puteți depăși numai după ce pietonii și bicicliștii v-au făcut semn în acest sens",
+        "b": "respectați prevederile legale",
+        "c": "bicicliștii și pietonii pot fi depășiți numai dacă distanța laterală este de 3 m"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 19,
+      "question": "Aveți obligația de a opri imediat vehiculul la semnalele adresate de:",
+      "options": {
+        "a": "ofițerii sau subofițerii Jandarmeriei Române",
+        "b": "polițiștii comunitari",
+        "c": "agenții de cale ferată, la trecerile la nivel"
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 20,
+      "question": "Cum trebuie să procedați atunci când un autobuz școlar oprește cu luminile de avarie aprinse?",
+      "options": {
+        "a": "luminile intermitente de avertizare ale autobuzelor școlare vă obligă să opriți",
+        "b": "circulați cu atenție sporită",
+        "c": "nu aveți nicio obligație"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 21,
+      "question": "Ce măsuri trebuie să luați atunci când circulați în condiții atmosferice ce împiedică mult vizibilitatea?",
+      "options": {
+        "a": "să circulați pe distanțe scurte și cu luminile de poziție în funcțiune;",
+        "b": "să folosiți luminile de poziție și să circulați cât mai aproape de marginea din dreapta a drumului;",
+        "c": "să folosiți luminile de întâlnire."
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 22,
+      "question": "În care dintre situații se suspendă exercitarea dreptului de a conduce?",
+      "options": {
+        "a": "în cazul depășirii în mod repetat, cu mai mult de 20 km/h, a vitezei maxime legale",
+        "b": "în cazul neopririi la semnalul agentului de cale ferată",
+        "c": "în cazul neprezentării în termen de 24 de ore la unitatea de poliție competentă pe raza căreia s-a produs un accident soldat cu avarierea vehiculului"
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 23,
+      "question": "În ce situații se reduce preventiv viteza în trafic?",
+      "options": {
+        "a": "în toate situațiile în care se prevede o stare de pericol, care poate fi evitată rulând cu o viteză inferioară",
+        "b": "în toate cazurile prevăzute în Regulamentul pentru aplicarea legii privind circulația pe drumurile publice",
+        "c": "atunci când ești obosit, indispus sau suferi de o afecțiune care îți diminuează capacitatea de a conduce"
+      },
+      "correct": ["a", "b"]
+    },
+    {
+      "id": 24,
+      "question": "La trecerea autovehiculelor cu regim de circulație prioritar, care au în funcțiune mijloacele de avertizare sonoră și luminoasă de culoare albastră, sunteți obligat:",
+      "options": {
+        "a": "să reduceți viteza",
+        "b": "să circulați cât mai aproape de marginea drumului în sensul de deplasare",
+        "c": "să acordați prioritate de trecere"
+      },
+      "correct": ["a", "b", "c"]
+    },
+    {
+      "id": 25,
+      "question": "Semaforul instalat pe trotuar are în funcțiune semnalul roșu, iar cel suspendat, pentru direcția de mers la stânga, semnalul verde. Conducătorul de vehicul care dorește să meargă înainte are dreptul să intre în intersecție?",
+      "options": {
+        "a": "da, deoarece semaforul suspendat are semnalul verde în funcțiune",
+        "b": "nu, deoarece semaforul de pe trotuar, care i se adresează, are semnalul roșu în funcțiune",
+        "c": "nu, deoarece deplasarea pe direcția înainte este permisă numai atunci când semnalul verde este în funcțiune la ambele semafoare"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 26,
+      "question": "Întoarcerea este interzisă:",
+      "options": {
+        "a": "pe drumurile cu circulație intensă;",
+        "b": "când există riscul ca marginea drumului să cedeze, respectiv soliditatea drumului nu permite;",
+        "c": "pe poduri."
+      },
+      "correct": ["b", "c"]
+    },
+    {
+      "id": 27,
+      "question": "La frânare, vehiculul derapează. Cum reacționați corect?",
+      "options": {
+        "a": "frânați la maximum",
+        "b": "nu acționați frâna și rotiți volanul în sens invers derapării",
+        "c": "opriți motorul"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 28,
+      "question": "În care dintre următoarele cazuri, pe lângă amenda contravențională, se reține și permisul de conducere?",
+      "options": {
+        "a": "neoprirea la semnalul persoanelor autorizate din zona de lucrări la drumul public",
+        "b": "nerespectarea semnalelor polițiștilor la trecerea coloanelor oficiale",
+        "c": "neoprirea la semnalul agentului de cale ferată"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 29,
+      "question": "Cum veți proceda la întâlnirea semnalului intermitent de culoare galbenă?",
+      "options": {
+        "a": "acest semnal nu vă permite trecerea",
+        "b": "veți circula cu viteză redusă",
+        "c": "veți respecta semnificația semnalizării rutiere și a regulilor de circulație aplicabile în acel loc"
+      },
+      "correct": ["b", "c"]
+    },
+    {
+      "id": 30,
+      "question": "Ce vehicule pot fi depășite, prin excepție, pe un pod?",
+      "options": {
+        "a": "vehiculele cu tracțiune animală, motociclete fără ataș și biciclete",
+        "b": "tractoarele și alte autovehicule lente",
+        "c": "niciun vehicul"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 31,
+      "question": "În ce situație poate fi reținut certificatul de înmatriculare al unui vehicul?",
+      "options": {
+        "a": "autovehiculul are aplicate afișe publicitare",
+        "b": "datele din certificatul de înmatriculare nu concordă cu caracteristicile tehnice ale vehiculului",
+        "c": "deținătorul nu face dovada încheierii asigurării auto de răspundere civilă"
+      },
+      "correct": ["b", "c"]
+    },
+    {
+      "id": 32,
+      "question": "Ce condiții tehnice trebuie să îndeplinească un autovehicul pentru a circula pe drumurile publice?",
+      "options": {
+        "a": "să nu depășească masa totală maximă autorizată înscrisă în certificatul de înmatriculare",
+        "b": "să nu depășească gabaritul înscris în certificatul de înmatriculare",
+        "c": "să fie înmatriculat și să corespundă condițiilor tehnice legale"
+      },
+      "correct": ["a", "c"]
+    },
+    {
+      "id": 33,
+      "question": "Criteriul de alegere a benzinei pentru motoarele cu aprindere prin scânteie îl constituie:",
+      "options": {
+        "a": "culoarea și consistența",
+        "b": "cifra octanică (CO)",
+        "c": "cifra cetanică (CC)"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 34,
+      "question": "În care dintre următoarele situații conducătorul unui vehicul este obligat să folosească luminile de întâlnire sau de drum?",
+      "options": {
+        "a": "în cazul arterelor de circulație slab iluminate, când vizibilitatea este redusă, în mers, atât în localități, cât și în afara acestora",
+        "b": "în cazul staționării pe timp de noapte pe partea carosabilă a drumurilor naționale sau în cazul parcării în locuri special amenajate, dar neiluminate",
+        "c": "pe timp de zi pe drumurile naționale, numai în situațiile în care traficul este supraaglomerat"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 35,
+      "question": "În ce condiții pot circula pe drumurile publice autovehiculele / tractoarele agricole sau forestiere?",
+      "options": {
+        "a": "când au un aspect civilizat",
+        "b": "când nu depășesc greutatea și gabaritul înscrise în certificatul de înmatriculare",
+        "c": "când sunt în bună stare de funcționare și îndeplinesc condițiile tehnice stabilite prin lege"
+      },
+      "correct": ["b", "c"]
+    },
+    {
+      "id": 36,
+      "question": "Persoanele accidentate, cu arsuri multiple pe corp și membre, trebuie să fie:",
+      "options": {
+        "a": "dezbrăcate rapid de haine, după stingerea flăcărilor",
+        "b": "transportate urgent la o unitate medicală",
+        "c": "spălate, bandajate și apoi transportate la cea mai apropiată unitate sanitară"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 37,
+      "question": "Ce cauze determină poluarea mediului ambiant de către autovehicule?",
+      "options": {
+        "a": "rularea cu viteză redusă, fără motiv;",
+        "b": "arderea incompletă și defectuoasă a combustibilului;",
+        "c": "defectarea filtrului de benzină sau motorină."
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 38,
+      "question": "Ce măsuri se iau în cazul accidentării foarte grave a unei persoane, într-un accident de circulație?",
+      "options": {
+        "a": "transportul imediat la cea mai apropiată unitate sanitară, cu orice mijloc de transport posibil",
+        "b": "transportul imediat până la prima localitate și anunțarea ambulanței",
+        "c": "acordarea primului ajutor, până la sosirea ambulanței"
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 39,
+      "question": "Care dintre faptele de mai jos constituie infracțiune și se pedepsește ca atare?",
+      "options": {
+        "a": "conducerea pe drumul public a unui autovehicul neînmatriculat",
+        "b": "conducerea pe drumul public a unui autovehicul fără certificat de înmatriculare",
+        "c": "conducerea pe drumul public a unui autovehicul cu număr de înmatriculare fals"
+      },
+      "correct": ["a", "c"]
+    },
+    {
+      "id": 40,
+      "question": "Semnalul de culoare galbenă al semaforului:",
+      "options": {
+        "a": "permite intrarea în intersecție, dacă urmează după lumina verde",
+        "b": "permite schimbarea direcției de mers către dreapta",
+        "c": "interzice intrarea în intersecție, dacă vehiculul poate fi oprit în condiții de siguranță"
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 41,
+      "question": "La ce vă puteți aștepta, din punct de vedere al conduitei preventive, dacă circulați în spatele unui camion cu remorcă, ce intenționează să vireze la dreapta pe o stradă îngustă?",
+      "options": {
+        "a": "înainte de a vira, camionul se oprește",
+        "b": "înainte de a vira, camionul se angajează inițial spre stânga, din cauza gabaritului",
+        "c": "camionul se comportă ca orice autoturism"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 42,
+      "question": "Când este permisă depășirea prin stânga a tramvaielor aflate în mers?",
+      "options": {
+        "a": "atunci când drumul public este cu sens unic",
+        "b": "când între șina de tramvai din dreapta și marginea trotuarului nu există suficient spațiu pentru depășire",
+        "c": "în nicio situație"
+      },
+      "correct": ["a", "b"]
+    },
+    {
+      "id": 43,
+      "question": "Neeliberarea completă a frânei de staționare determină:",
+      "options": {
+        "a": "zgomote în zona manetei frânei de mână",
+        "b": "un consum suplimentar de carburant",
+        "c": "încălzirea excesivă a butucilor roților din spate"
+      },
+      "correct": ["b", "c"]
+    },
+    {
+      "id": 44,
+      "question": "Termenul de valabilitate a inspecției tehnice periodice poate fi regăsit:",
+      "options": {
+        "a": "într-un document eliberat de service",
+        "b": "în anexa certificatului de înmatriculare al autovehiculului",
+        "c": "în manualul tehnic al autovehiculului sau al remorcii"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 45,
+      "question": "În care dintre situații este interzis să circulați pe drumurile publice?",
+      "options": {
+        "a": "atunci când certificatul de înmatriculare este deteriorat",
+        "b": "atunci când vehiculul nu este asigurat de răspundere civilă, în caz de pagube materiale produse terților prin accidente de circulație, conform legii",
+        "c": "atunci când conducătorul auto nu a plătit taxa de folosire a drumurilor publice"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 46,
+      "question": "Cum se semnalizează, noaptea, intenția de a depăși alt vehicul, într-o localitate, pe un drum neiluminat?",
+      "options": {
+        "a": "cu faza de drum a luminii farurilor",
+        "b": "cu luminile indicatoare de direcție",
+        "c": "prin folosirea combinată a fazei scurte și a semnalului sonor"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 47,
+      "question": "Blocarea unei roți în timpul mersului poate fi determinată de una dintre defecțiunile:",
+      "options": {
+        "a": "ovalizarea tamburului",
+        "b": "griparea rulmenților",
+        "c": "uzura exagerată a saboților"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 48,
+      "question": "Conducătorilor de vehicule le este interzis:",
+      "options": {
+        "a": "să lase volanul liber;",
+        "b": "să claxoneze;",
+        "c": "să aplice afișe și reclame publicitare pe parbriz, pe lunetă sau pe geamurile laterale."
+      },
+      "correct": ["a", "c"]
+    },
+    {
+      "id": 49,
+      "question": "În care dintre situațiile de mai jos este interzisă întoarcerea?",
+      "options": {
+        "a": "în curbele cu vizibilitatea redusă sub 50 m",
+        "b": "la întâlnirea indicatorului „Drum cu prioritate”",
+        "c": "la întâlnirea indicatorului „Drum îngustat”"
+      },
+      "correct": ["a", "c"]
+    },
+    {
+      "id": 50,
+      "question": "În cazul unui accident cu victime și cu deformarea accentuată a caroseriei, procedați la:",
+      "options": {
+        "a": "victimele conștiente sunt sfătuite să nu se miște, iar degajarea acestora trebuie să se realizeze cât mai repede și numai de către echipaje specializate",
+        "b": "degajarea victimelor trebuie să se realizeze cât mai repede, prin orice mijloace",
+        "c": "se administrează calmante victimelor care sunt conștiente"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 51,
+      "question": "Pentru întreținerea sistemului de ungere, trebuie să efectuați:",
+      "options": {
+        "a": "verificarea și completarea nivelului uleiului din baie",
+        "b": "înlocuirea uleiului după expirarea termenului de utilizare",
+        "c": "desfundarea orificiilor de aerisire ale radiatorului"
+      },
+      "correct": ["a", "b"]
+    },
+    {
+      "id": 52,
+      "question": "Într-un pansament, pe plagă, se aplică:",
+      "options": {
+        "a": "o compresă de vată sterilă",
+        "b": "o compresă din tifon steril",
+        "c": "o compresă oarecare"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 53,
+      "question": "Ce manevre sunt interzise pe autostradă?",
+      "options": {
+        "a": "oprirea și efectuarea unei pene de cauciuc",
+        "b": "învățarea conducerii unui vehicul",
+        "c": "încercarea prototipurilor de șasiuri și de vehicule cu motor"
+      },
+      "correct": ["b", "c"]
+    },
+    {
+      "id": 54,
+      "question": "Echipamentul de frânare nu este obligatoriu la remorcile cu masa totală maximă autorizată:",
+      "options": {
+        "a": "mai mică de 750 kg",
+        "b": "mai mică de 400 kg",
+        "c": "mai mare de 750 kg"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 55,
+      "question": "Aprinderea luminii „martor” de la bord, care semnalizează funcționarea generatorului de curent, poate indica:",
+      "options": {
+        "a": "griparea rotorului pompei de apă",
+        "b": "ruperea curelei de antrenare a pompei de apă, a ventilatorului și a alternatorului",
+        "c": "scurgeri de electrolit din acumulatori"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 56,
+      "question": "Ce rol are cutia de viteze?",
+      "options": {
+        "a": "asigură transmiterea puterii la roți",
+        "b": "permite mersul înapoi, fără a inversa sensul de rotație a motorului",
+        "c": "permite staționarea cu motorul în funcțiune"
+      },
+      "correct": ["a", "b", "c"]
+    },
+    {
+      "id": 57,
+      "question": "Care este viteza maximă prevăzută de lege pentru circulația în zonele rezidențiale?",
+      "options": {
+        "a": "5 km/h;",
+        "b": "10 km/h;",
+        "c": "20 km/h."
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 58,
+      "question": "În care dintre situații consumul de carburant al unui motor crește?",
+      "options": {
+        "a": "atunci când motorul nu atinge temperatura de funcționare;",
+        "b": "atunci când fumul de eșapament este de culoare neagră;",
+        "c": "atunci când motorul funcționează cu întreruperi."
+      },
+      "correct": ["a", "b", "c"]
+    },
+    {
+      "id": 59,
+      "question": "Nedeclararea, la cererea poliției, a identității persoanelor cărora deținătorii de vehicule le-au încredințat vehiculele proprii se sancționează cu:",
+      "options": {
+        "a": "amendă contravențională și puncte de penalizare",
+        "b": "amendă contravențională",
+        "c": "reținerea permisului de conducere"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 60,
+      "question": "Care este poziția corectă a conducătorului auto în timpul conducerii?",
+      "options": {
+        "a": "să fie cât mai concentrat, să țină volanul strâns și privirea îndreptată numai înainte și să stea cât mai aproape de parbriz",
+        "b": "să stea cât mai confortabil pe scaun, cu capul rezemat de tetieră și cu ambele mâini pe volan, în zona orelor 10:00-14:00",
+        "c": "cea mai corectă poziție în timpul conducerii auto este aceea care previne apariția somnului"
+      },
+      "correct": ["b"]
+    },
+    {
+      "id": 61,
+      "question": "Conducătorii de autovehicule au următoarele obligații, înainte de a pleca la drum:",
+      "options": {
+        "a": "să verifice sistemul de lumini și semnalizare",
+        "b": "să verifice instalația de climatizare",
+        "c": "să mențină permanent curat parbrizul"
+      },
+      "correct": ["a", "c"]
+    },
+    {
+      "id": 62,
+      "question": "Unde trebuie să declarați pierderea, furtul sau distrugerea permisului de conducere:",
+      "options": {
+        "a": "la unitatea emitentă",
+        "b": "la poliția de care aparțineți cu domiciliul",
+        "c": "la cea mai apropiată secție de poliție"
+      },
+      "correct": ["a"]
+    },
+    {
+      "id": 63,
+      "question": "Punctele de penalizare se aplică:",
+      "options": {
+        "a": "pentru pătrunderea într-o intersecție atunci când circulația este blocată în interiorul acesteia",
+        "b": "pentru lăsarea liberă a volanului în timpul conducerii",
+        "c": "pentru aruncarea de obiecte pe drumul public"
+      },
+      "correct": ["a", "b"]
+    },
+    {
+      "id": 64,
+      "question": "Punctele de penalizare se aplică pentru:",
+      "options": {
+        "a": "nerespectarea semnificației indicatorului „Copii”",
+        "b": "nerespectarea semnificației indicatorului „Drum cu denivelări”",
+        "c": "nerespectarea semnificației indicatorului „Oprire”, instalat la trecerea la nivel cu o cale ferată"
+      },
+      "correct": ["c"]
+    },
+    {
+      "id": 65,
+      "question": "Întoarcerea este interzisă:",
+      "options": {
+        "a": "pe poduri și sub poduri",
+        "b": "pe drumurile naționale",
+        "c": "la mai puțin de 50 m de intrarea în sediile instituțiilor"
+      },
+      "correct": ["a"]
+    }
+  ];
+
+  document.getElementById("db-stat").innerText = `Bază de date: ${QUESTIONS_POOL.length} întrebări disponibile`;
+
+  let examQueue = [];
+  let answeredCount = 0;
+  let score = 0;
+  let wrong = 0;
+  let currentItem = null;
+
+  function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+  }
+
+  function startExam() {
+    let poolCopy = [...QUESTIONS_POOL];
+    shuffle(poolCopy);
+    examQueue = poolCopy.slice(0, TOTAL_QUESTIONS);
+
+    answeredCount = 0;
+    score = 0;
+    wrong = 0;
+
+    document.getElementById("screen-start").classList.add("hidden");
+    document.getElementById("screen-exam").classList.remove("hidden");
+
+    loadNextQuestion();
+  }
+
+  function updateHeader() {
+    const isDeferred = (answeredCount + examQueue.length + 1) > TOTAL_QUESTIONS;
+    const tag = isDeferred ? " • [REVENIRE]" : "";
+
+    document.getElementById("progress-lbl").innerText = `Progres: ${answeredCount}/${TOTAL_QUESTIONS}${tag}`;
+    document.getElementById("stats-lbl").innerText = `Corecte: ${score} | Greșite: ${wrong}/${MAX_WRONG} | În coadă: ${examQueue.length}`;
+  }
+
+  function resetControls() {
+    ["a", "b", "c"].forEach(id => {
+      const chk = document.getElementById(`chk-${id}`);
+      chk.checked = false;
+      chk.disabled = false;
+    });
+
+    const fb = document.getElementById("feedback-box");
+    fb.style.display = "none";
+    fb.className = "feedback-box";
+
+    document.getElementById("btn-submit").classList.remove("hidden");
+    document.getElementById("btn-skip").classList.remove("hidden");
+    document.getElementById("btn-next").classList.add("hidden");
+  }
+
+  function loadNextQuestion() {
+    if (examQueue.length === 0) {
+      finishExam();
+      return;
+    }
+
+    resetControls();
+    currentItem = examQueue.shift();
+    updateHeader();
+
+    document.getElementById("q-text").innerText = currentItem.question;
+    document.getElementById("txt-a").innerText = "A) " + (currentItem.options.a || "");
+    document.getElementById("txt-b").innerText = "B) " + (currentItem.options.b || "");
+    document.getElementById("txt-c").innerText = "C) " + (currentItem.options.c || "");
+  }
+
+  function deferQuestion() {
+    examQueue.push(currentItem);
+    loadNextQuestion();
+  }
+
+  function submitAnswer() {
+    const selected = [];
+    if (document.getElementById("chk-a").checked) selected.push("a");
+    if (document.getElementById("chk-b").checked) selected.push("b");
+    if (document.getElementById("chk-c").checked) selected.push("c");
+
+    if (selected.length === 0) {
+      alert("Bifează cel puțin o opțiune!");
+      return;
+    }
+
+    ["a", "b", "c"].forEach(id => {
+      document.getElementById(`chk-${id}`).disabled = true;
+    });
+
+    document.getElementById("btn-submit").classList.add("hidden");
+    document.getElementById("btn-skip").classList.add("hidden");
+
+    answeredCount++;
+    const expected = [...currentItem.correct].map(x => x.toLowerCase()).sort();
+    selected.sort();
+
+    const isCorrect = JSON.stringify(selected) === JSON.stringify(expected);
+    const fb = document.getElementById("feedback-box");
+    fb.style.display = "block";
+
+    if (isCorrect) {
+      score++;
+      fb.classList.add("feedback-correct");
+      fb.innerText = "✓ RĂSPUNS CORECT";
+    } else {
+      wrong++;
+      fb.classList.add("feedback-wrong");
+      fb.innerText = `✗ RĂSPUNS GREȘIT — Varianta corectă: ${expected.join(", ").toUpperCase()}`;
+    }
+
+    updateHeader();
+
+    if (wrong >= MAX_WRONG) {
+      setTimeout(() => {
+        alert(`REZULTAT: RESPINS!\nAi atins limita de ${wrong} greșeli.`);
+        location.reload();
+      }, 300);
+      return;
+    }
+
+    if (examQueue.length > 0) {
+      document.getElementById("btn-next").classList.remove("hidden");
+    } else {
+      setTimeout(finishExam, 300);
+    }
+  }
+
+  function finishExam() {
+    if (score >= PASSING_SCORE) {
+      alert(`FELICITĂRI! Ai fost ADMIS!\nPunctaj final: ${score} corecte | ${wrong} greșite.`);
+    } else {
+      alert(`REZULTAT: RESPINS.\nPunctaj final: ${score} corecte | ${wrong} greșite.`);
+    }
+    location.reload();
+  }
+</script>
+
+</body>
+</html>
